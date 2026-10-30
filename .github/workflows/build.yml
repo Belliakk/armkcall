@@ -3,14 +3,12 @@ on: [push, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
 
-      - name: Select Stable Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: 'latest-stable'
+      - name: Select Stable Xcode 16
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
 
       - name: Install XcodeGen
         run: brew install xcodegen
@@ -18,18 +16,22 @@ jobs:
       - name: Generate Xcode Project
         run: xcodegen generate
 
-      - name: Build
+      - name: Clean Cache and Build
         run: |
+          # Принудительно очищаем кэш перед сборкой
+          rm -rf ~/Library/Developer/Xcode/DerivedData
+          
           xcodebuild clean build \
             -project armkcall.xcodeproj \
             -scheme armkcall \
-            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
             -configuration Release \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
             COMPILATION_CACHE_ENABLE_CACHING=NO \
             SWIFT_ENABLE_PROJECT_PREFIX_MAPPING=NO \
+            SWIFT_SUPPRESS_WARNINGS=YES \
             -derivedDataPath ./build
 
       - name: Package IPA
