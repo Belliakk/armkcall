@@ -11,7 +11,7 @@ struct Nutrient: Codable {
 }
 
 class NutritionAPI {
-    private let usdaKey = "ТВОЙ_КЛЮЧ_USDA"
+    private let usdaKey = "m8mm6GrfCfNR9jTKNKPczFQPT9FqKwBNM88NQHJK"
     
     func searchFood(query: String) async throws -> [FoodItem] {
         let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
